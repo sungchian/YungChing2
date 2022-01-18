@@ -100,6 +100,7 @@
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
         $(function () {
+            let nowEditId = -1;
             let old_name = '';
             let old_supplierId = '';
             let old_categoryId = '';
@@ -174,6 +175,39 @@
                         updateList();
                     }
                 });
+            });
+
+            //編輯送出功能
+            $("#edit-submit").on('click', function () {
+                //if ($('#edit-name').val().trim() == "" || $('#edit-price').val().trim() == "" || $('#edit-quantity').val().trim() == "") {
+                //    toastr.error("請填寫所有必填欄位");
+                //    return;
+                //}
+                if ($('#edit-name').val() != old_name || $('#edit-supplierId').val() != old_supplierId || $('#edit-categoryId').val() != old_categoryId || $('#edit-quantityPerUnit') != old_quantityPerUnit || $('#edit-unitPrice') != old_unitPrice || $('#edit-unitsInStock') != old_unitsInStock || $('#edit-unitsOnOrder') != old_unitsOnOrder) {
+                    $.ajax({
+                        url: '@Url.Action("UpdateProd", "Products")',
+                        method: 'POST',
+                        data: {
+                            Id: nowEditId,
+                            name: $('#edit-name').val(),
+                            supplierId: $('#edit-supplierId').val(),
+                            categoryId: $('#edit-categoryId').val(),
+                            quantityPerUnit: $('#edit-quantityPerUnit').val(),
+                            unitPrice: $('#edit-unitPrice').val(),
+                            unitsInStock: $('#edit-unitsInStock').val(),
+                            unitsOnOrder: $('#edit-unitsOnOrder').val(),
+                        },
+                        success: (data) => {
+                            console.log(data);
+                            toastr.success('編輯完成');
+                            updateList();
+                        },
+                        error: (data) => {
+                            toastr.error('錯誤', data);
+                        }
+                    });
+                }
+                $("#editModal").modal("hide");
             });
 
             //首次載入
