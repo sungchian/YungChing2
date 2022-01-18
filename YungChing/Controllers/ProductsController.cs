@@ -56,5 +56,52 @@ namespace YungChing.Controllers
             }
         }
 
+        public async Task<IActionResult> QueryProdById(int id)
+        {
+            string connectionString = getAppSetting.getDataBseStr();
+
+            var sqlString = @"
+                SELECT [ProductID]
+                              ,[ProductName]
+                              ,[SupplierID]
+                              ,[CategoryID]
+                              ,[QuantityPerUnit]
+                              ,[UnitPrice]
+                              ,[UnitsInStock]
+                              ,[UnitsOnOrder]
+                FROM [Northwind].[dbo].[Products]
+                WHERE [ProductID] = @id";
+
+            using (SqlConnection connect = new SqlConnection(connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(sqlString, connect))
+                {
+                    connect.Open();
+
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
+
+                    SqlDataReader test = cmd.ExecuteReader();
+
+                    var maintainProd = new MProducts();
+
+                    while (test.Read())
+                    {
+                        maintainProd.Id = Convert.ToInt32(test["ProductID"]);
+                        maintainProd.Name = Convert.ToString(test["ProductName"]);
+                        maintainProd.SupplierID = Convert.ToInt32(test["SupplierID"]);
+                        maintainProd.CategoryID = Convert.ToInt32(test["CategoryID"]);
+                        maintainProd.QuantityPerUnit = Convert.ToString(test["QuantityPerUnit"]);
+                        maintainProd.UnitPrice = Convert.ToString(test["UnitPrice"]);
+                        maintainProd.UnitsInStock = Convert.ToInt32(test["UnitsInStock"]);
+                        maintainProd.UnitsOnOrder = Convert.ToInt32(test["UnitsOnOrder"]);
+
+                    }
+                    return Json(maintainProd);
+                }
+            }
+        }
+
+
+
     }
 }

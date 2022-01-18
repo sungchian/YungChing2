@@ -46,12 +46,67 @@
     </table>
 </div>
 
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog  modal-lg edit-large">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center" id="editModalLabel">Products 編輯</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row modal-row">
+                    <div class="col-md-4">
+                        <label>名稱 <span class="must-fill">*</span></label><br />
+                        <input class="form-control" type="text" id="edit-name" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label>SupplierID</label><br />
+                        <input class="form-control" type="text" id="edit-supplierId" />
+                    </div>
+                    <div class="col-md-4">
+                        <label>物品類別</label><br />
+                        <input class="form-control" type="text" id="edit-categoryId" />
+                    </div>
+                    <div class="col-md-5">
+                        <label>QuantityPerUnit</label><br />
+                        <input class="form-control" type="text" id="edit-quantityPerUnit" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>UnitPrice <span class="must-fill">*</span></label><br />
+                        <input class="form-control" type="text" id="edit-unitPrice" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>UnitsInStock <span class="must-fill">*</span></label><br />
+                        <input class="form-control" type="text" id="edit-unitsInStock" oninput="value=value.replace(/[^\d]/g,'')" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>UnitsOnOrder <span class="must-fill">*</span></label><br />
+                        <input class="form-control" type="text" id="edit-unitsOnOrder" oninput="value=value.replace(/[^\d]/g,'')" />
+                    </div>
+
+                </div>  
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="edit-submit">修改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts{
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
         $(function () {
+            let old_name = '';
+            let old_supplierId = '';
+            let old_categoryId = '';
+            let old_quantityPerUnit = '';
+            let old_unitPrice = '';
+            let old_unitsInStock = '';
+            let old_unitsOnOrder = '';
 
             function updateList() {
                 $.ajax({
@@ -84,6 +139,43 @@
                     }
                 })
             }
+
+            //載入編輯頁面
+            $("#prod-list").on('click', ".editBtn", function () {
+                nowEditId = $(this).attr('data-id');
+                $.ajax({
+                    url: '@Url.Action("QueryProdById", "Products")',
+                    method: 'GET',
+                    data: {
+                        Id: $(this).attr('data-id')
+                    },
+                    success: (data) => {
+                        console.log(data);
+                        $("#edit-name").val(data.name);
+                        $('#edit-supplierId').val(data.supplierID);
+                        $("#edit-categoryId").val(data.categoryID);
+                        $('#edit-quantityPerUnit').val(data.quantityPerUnit);
+                        $('#edit-unitPrice').val(data.unitPrice);
+                        $("#edit-unitsInStock").val(data.unitsInStock);
+                        $("#edit-unitsOnOrder").val(data.unitsOnOrder);
+                        old_name = data.name;
+                        old_supplierId = data.supplierID;
+                        old_categoryId = data.categoryID;
+                        old_quantityPerUnit = data.quantityPerUnit;
+                        old_unitPrice = data.unitPrice;
+                        old_unitsInStock = data.unitsInStock;
+                        old_unitsOnOrder = data.unitsOnOrder;
+
+
+                        $("#editModal").modal("show");
+                    },
+                    error: (data) => {
+                        toastr.error('錯誤', data);
+                        updateList();
+                    }
+                });
+            });
+
             //首次載入
             updateList();
         });
