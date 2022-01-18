@@ -15,5 +15,6 @@ namespace YungChing.Models
         public string UnitPrice { get; set; }
         public int UnitsInStock { get; set; }
         public int UnitsOnOrder { get; set; }
+
     }
 }

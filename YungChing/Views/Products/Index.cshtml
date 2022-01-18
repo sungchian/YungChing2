@@ -1,0 +1,91 @@
+﻿@model IEnumerable<YungChing.Models.MProducts>;
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" />
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+<h2>商品列表</h2>
+
+<div class="row">
+    <table class="table" id="table">
+        <thead>
+            <tr>
+                <th class="auto-width text-center">
+                    <button type="button" class="btn btn-primary" id="insert-modal-btn"><i class="fa fa-plus"></i> 新增</button>
+                </th>
+                <th class="auto-width text-center">
+                    <label>ID</label>
+                </th>
+                <th class="auto-width text-center">
+                    <label>Name</label>
+                </th>
+                <th class="auto-width text-center">
+                    <label>SupplierID</label>
+                </th>
+                <th class="auto-width text-center">
+                    <label>CategoryID</label>
+                </th>
+                <th class="auto-width text-center">
+                    <label>QuantityPerUnit</label>
+                </th>
+                <th class="auto-width text-center">
+                    <label>UnitPrice</label>
+                </th>
+                <th class="auto-width text-center">
+                    <label>UnitsInStock</label>
+                </th>
+                <th class="auto-width text-center">
+                    <label>UnitsOnOrder</label>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="prod-list">
+        </tbody>
+    </table>
+</div>
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script>
+        $(function () {
+
+            function updateList() {
+                $.ajax({
+                    url: '@Url.Action("getAllProducts", "Products")',
+                    method: 'GET',
+                    success: (data) => {
+                        let idNum = 0;
+                        data.forEach((d) => {
+                            let template = `
+                                    <tr>
+                                    <td class="auto-width text-center">
+                                    <button class="btn skh-btn-sm editBtn" type="button" data-id="${d.id}"><i class="fa fa-pencil"></i></button>
+                                    <button class="btn skh-btn-sm-danger deleteBtn" type="button" data-id="${d.id}"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                    <td class="auto-width text-center">${d.id}</td>
+                                    <td class="auto-width text-center">${d.name}</td>
+                                    <td class="auto-width text-center">${d.supplierID}</td>
+                                    <td class="auto-width text-center">${d.categoryID}</td>
+                                    <td class="auto-width text-center">${d.quantityPerUnit}</td>
+                                    <td class="auto-width text-center">${d.unitPrice}</td>
+                                    <td class="auto-width text-center">${d.unitsInStock}</td>
+                                    <td class="auto-width text-center">${d.unitsOnOrder}</td>
+                                </tr>
+                            `;
+                            $("#prod-list").append(template);
+                        })
+                    },
+                    error: () => {
+                        toastr.error("can't not get data");
+                    }
+                })
+            }
+            //首次載入
+            updateList();
+        });
+    </script>
+}
