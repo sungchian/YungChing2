@@ -84,11 +84,59 @@
                         <input class="form-control" type="text" id="edit-unitsOnOrder" oninput="value=value.replace(/[^\d]/g,'')" />
                     </div>
 
-                </div>  
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
                 <button type="button" class="btn btn-primary" id="edit-submit">修改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Insert Modal -->
+<div class="modal fade" id="insertModal" tabindex="-1" role="dialog" aria-labelledby="insertModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog  modal-lg insert-large">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center" id="editModalLabel">Products 新增</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row modal-row">
+                    <div class="col-md-4">
+                        <label>名稱 <span class="must-fill">*</span></label><br />
+                        <input class="form-control" type="text" id="insert-name" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label>SupplierID</label><br />
+                        <input class="form-control" type="text" id="insert-supplierId" />
+                    </div>
+                    <div class="col-md-4">
+                        <label>物品類別</label><br />
+                        <input class="form-control" type="text" id="insert-categoryId" />
+                    </div>
+                    <div class="col-md-5">
+                        <label>QuantityPerUnit</label><br />
+                        <input class="form-control" type="text" id="insert-quantityPerUnit" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>UnitPrice <span class="must-fill">*</span></label><br />
+                        <input class="form-control" type="text" id="insert-unitPrice" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>UnitsInStock <span class="must-fill">*</span></label><br />
+                        <input class="form-control" type="text" id="insert-unitsInStock" oninput="value=value.replace(/[^\d]/g,'')" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>UnitsOnOrder <span class="must-fill">*</span></label><br />
+                        <input class="form-control" type="text" id="insert-unitsOnOrder" oninput="value=value.replace(/[^\d]/g,'')" />
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="insert-submit">新增</button>
             </div>
         </div>
     </div>
@@ -178,6 +226,46 @@
                 });
             });
 
+            //載入新增頁面
+            $("#insert-modal-btn").on('click', function () {
+                $("#insert-name").val("");
+                $("#insert-categoryId").val("");
+                $("#insert-supplierId").val("");
+                $("#insert-quantityPerUnit").val("");
+                $("#insert-unitPrice").val("");
+                $("#insert-unitsInStock").val("");
+                $("#insert-unitsOnOrder").val("");
+
+                $("#insertModal").modal('show');
+
+            });
+
+            //新增送出功能
+            $("#insert-submit").on("click", function () {
+                $.ajax({
+                    url: '@Url.Action("InsertProd", "Products")',
+                    method: 'POST',
+                    data: {
+                        Id: nowEditId,
+                        name: $('#insert-name').val(),
+                        supplierId: $('#insert-supplierId').val(),
+                        categoryId: $('#insert-categoryId').val(),
+                        quantityPerUnit: $('#insert-quantityPerUnit').val(),
+                        unitPrice: $('#insert-unitPrice').val(),
+                        unitsInStock: $('#insert-unitsInStock').val(),
+                        unitsOnOrder: $('#insert-unitsOnOrder').val(),
+                    },
+                    success: (data) => {
+                        toastr.success('新增完成');
+                        $("#insertModal").modal('hide');
+                        updateList();
+                    },
+                    error: (data) => {
+                        toastr.error("錯誤!" + data);
+                    }
+                });
+            });
+
             //編輯送出功能
             $("#edit-submit").on('click', function () {
                 //if ($('#edit-name').val().trim() == "" || $('#edit-price').val().trim() == "" || $('#edit-quantity').val().trim() == "") {
@@ -222,7 +310,7 @@
                     success: function (data) {
                        toastr.success('刪除完成');
                         updateList();
-                      
+
                     },
                     error: function (data) {
                        toastr.error('錯誤', data);

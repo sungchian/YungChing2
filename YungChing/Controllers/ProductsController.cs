@@ -102,7 +102,61 @@ namespace YungChing.Controllers
         }
 
 
+        //新增功能
+        public async Task<string> InsertProd(MProducts prod)
+        {
+            try
+            {
+                string connectionString = getAppSetting.getDataBseStr();
 
+                var sqlString = @"INSERT INTO [Northwind].[dbo].[Products]([ProductName], [SupplierID], [CategoryID], [QuantityPerUnit], [UnitPrice], [UnitsInStock], [UnitsOnOrder]) 
+                                                    values(@name, @supplierId, @categoryId, @quantityPerUnit,  @unitPrice, @unitsInStock, @unitsOnOrder);SELECT SCOPE_IDENTITY();";
+
+                using (SqlConnection connect = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(sqlString, connect))
+                    {
+                        connect.Open();
+
+                        cmd.Parameters.Add("@name", SqlDbType.NVarChar).Value = prod.Name;
+
+                        cmd.Parameters.Add("@supplierId", SqlDbType.Int).Value = prod.SupplierID;
+
+                        cmd.Parameters.Add("@categoryId", SqlDbType.Int).Value = prod.CategoryID;
+
+                        cmd.Parameters.Add("@quantityPerUnit", SqlDbType.NVarChar).Value = prod.QuantityPerUnit;
+
+                        cmd.Parameters.Add("@unitPrice", SqlDbType.Money).Value = prod.UnitPrice;
+
+                        cmd.Parameters.Add("@unitsInStock", SqlDbType.SmallInt).Value = prod.UnitsInStock;
+
+                        cmd.Parameters.Add("@unitsOnOrder", SqlDbType.SmallInt).Value = prod.UnitsOnOrder;
+
+                        //會傳遞一個字串，代表要插入資料表中的新值
+                        int test = decimal.ToInt32((decimal)cmd.ExecuteScalar());
+
+                        if (connect.State == ConnectionState.Open)
+                        {
+                            connect.Close();
+                        }
+
+                        if (test != 0)
+                        {
+                            return "success";
+                        }
+                        else
+                        {
+                            return "failed";
+                        }
+                        //dataReader ["欄位名稱"].ToString()    資料庫的資料
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
 
         //編輯功能
         public async Task<bool> UpdateProd(int Id, string name, string supplierId, string categoryId, string quantityPerUnit, string unitPrice, string unitsInStock, string unitsOnOrder)
