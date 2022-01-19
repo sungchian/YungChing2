@@ -101,6 +101,9 @@ namespace YungChing.Controllers
             }
         }
 
+
+
+
         //編輯功能
         public async Task<bool> UpdateProd(int Id, string name, string supplierId, string categoryId, string quantityPerUnit, string unitPrice, string unitsInStock, string unitsOnOrder)
         {
@@ -150,7 +153,7 @@ namespace YungChing.Controllers
             {
                 string connectionString = getAppSetting.getDataBseStr();
 
-                var sqlString = @"DELETE FROM [Northwind].[dbo].[Products] WHERE Id = @id";
+                var sqlString = @"DELETE FROM [Northwind].[dbo].[Products] WHERE [ProductID] = @id";
 
                 using (SqlConnection connect = new SqlConnection(connectionString))
                 {

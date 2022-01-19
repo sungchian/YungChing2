@@ -110,6 +110,7 @@
             let old_unitsOnOrder = '';
 
             function updateList() {
+                $("#prod-list").empty();
                 $.ajax({
                     url: '@Url.Action("getAllProducts", "Products")',
                     method: 'GET',
@@ -198,7 +199,6 @@
                             unitsOnOrder: $('#edit-unitsOnOrder').val(),
                         },
                         success: (data) => {
-                            console.log(data);
                             toastr.success('編輯完成');
                             updateList();
                         },
@@ -208,6 +208,26 @@
                     });
                 }
                 $("#editModal").modal("hide");
+            });
+
+
+            //刪除功能
+            $("#prod-list").on('click', ".deleteBtn", function () {
+                $.ajax({
+                    url: '@Url.Action("DeleteProd", "Products")',
+                    method: 'GET',
+                    data: {
+                        Id: $(this).attr('data-id')
+                    },
+                    success: function (data) {
+                       toastr.success('刪除完成');
+                        updateList();
+                      
+                    },
+                    error: function (data) {
+                       toastr.error('錯誤', data);
+                    }
+                });
             });
 
             //首次載入
